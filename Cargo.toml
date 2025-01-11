@@ -8,28 +8,16 @@ homepage = "https://github.com/didoloan/flutterwave-v3-rs.git"
 license = "MIT"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[workspace]
-members = [
-    "flutterwave-models"
-]
 
-[workspace.dependencies]
+[dependencies]
 reqwest = { version = "0.12.12", features = ["brotli", "deflate", "gzip", "rustls-tls", "stream", "zstd", "json"] }
 serde = { version="1.0.189", features=["derive"] }
 validator = { version = "0.16.1", features = ["card", "derive", "phone"] }
 thiserror = "1.0.57"
 serde_json = "1.0.114"
 chrono = { version="0.4.38", features=["serde"] }
-
-[dependencies]
-flutterwave-models = { path = "./flutterwave-models" }
+flutterwave-models = { version="0.1.0-alpha.1" }
 openssl = { features = ["bindgen", "v111", "v110", "vendored"], version = "0.10.68" }
-validator = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
-thiserror = { workspace = true }
-chrono = { workspace = true }
-reqwest = { workspace = true }
 tokio = { version = "1.42.0", features = ["macros", "net", "rt", "test-util"] }
 async_symm_crypto = "0.1.0"
 serde_qs = "0.13.0"
-serde_json = { workspace = true }

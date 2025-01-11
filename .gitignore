@@ -1,2 +1,4 @@
 /target
 *.lock
+/flutterwave-models
+/flutterwave-models/*
