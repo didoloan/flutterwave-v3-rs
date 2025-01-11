@@ -1,6 +1,8 @@
 use flutterwave_models::{
     charge::{
-        ach::{AchReq, AchRes}, bank_transfer::{BankTransferReq, BankTransferRes}, direct_charge::{CardChargeReq, CardChargeRes}
+        ach::{AchReq, AchRes},
+        bank_transfer::{BankTransferReq, BankTransferRes},
+        direct_charge::{CardChargeReq, CardChargeRes},
     },
     payment_plans::{
         CancelPlanReq, CreatePlanReq, GetPlanReq, GetPlansReq, GetPlansRes, PlanApiRes,

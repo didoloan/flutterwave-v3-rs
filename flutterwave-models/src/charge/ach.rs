@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 use std::collections::HashMap;
+use validator::Validate;
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct AchReq {
