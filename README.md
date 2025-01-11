@@ -1,8 +1,8 @@
 # Flutterwave-V3-rs
 
-[![Crates.io](https://img.shields.io/crates/v/flutterwave-rs.svg)](https://crates.io/crates/flutterwave-rs)
-[![docs.rs](https://docs.rs/flutterwave-rs/badge.svg)](https://docs.rs/flutterwave-rs)
-[![Build Status](https://github.com/didoloan/flutterwave-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/didoloan/flutterwave-rs/actions/workflows/rust.yml)
+[![Crates.io](https://img.shields.io/crates/v/flutterwave-rs.svg)](https://crates.io/crates/flutterwave-v3)
+[![docs.rs](https://docs.rs/flutterwave-rs/badge.svg)](https://docs.rs/flutterwave-v3)
+[![Build Status](https://github.com/didoloan/flutterwave-v3-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/didoloan/flutterwave-v3-rs/actions/workflows/rust.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
