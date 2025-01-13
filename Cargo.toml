@@ -1,6 +1,6 @@
 [package]
 name = "flutterwave-v3"
-version = "0.1.0-alpha.1"
+version = "0.1.1-alpha.1"
 edition = "2021"
 description = "A rust client to flutterwaveV3 API's"
 repository = "https://github.com/didoloan/flutterwave-v3-rs.git"
