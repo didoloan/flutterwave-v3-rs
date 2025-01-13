@@ -8,13 +8,18 @@ use flutterwave_models::{
         CancelPlanReq, CreatePlanReq, GetPlanReq, GetPlansReq, GetPlansRes, PlanApiRes,
         UpdatePlanReq, UpdatePlanReqBody,
     },
+    preauthorization::{
+        capture_preauth_charge::{CapturePreAuthChargeReq, CapturePreAuthChargeRes},
+        refund_preauth_charge::{RefundPreAuthChargeReq, RefundPreAuthChargeRes},
+        void_preauth_charge::{VoidPreAuthChargeReq, VoidPreAuthChargeRes},
+    },
     transactions::transaction_verify::{VerifyTransByIdReq, VerifyTransByTxRefReq, VerifyTransRes},
     validate_charge::{ValidateChargeReq, ValidateChargeRes},
     virtual_acct_number::{
         get_bulk_virtual_acct_details::{BulkVirtualAcctDetailsReq, BulkVirtualAcctDetailsRes},
         VirtualAcctBulkCreationReq, VirtualAcctBulkCreationRes, VirtualAcctCreationReq,
         VirtualAcctCreationRes,
-    },
+    }
 };
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 use std::borrow::Cow;
@@ -301,6 +306,48 @@ impl<'a> ToFwCall<'a> for AchReq {
         FwCall::new(
             Cow::Borrowed("/v3/charges?type=ach_payment"),
             reqwest::Method::PUT,
+            Some(Payload::Plain(self)),
+        )
+    }
+}
+
+impl<'a> ToFwCall<'a> for CapturePreAuthChargeReq {
+    type ApiRequest = Self;
+
+    type ApiResponse = ResponseType<CapturePreAuthChargeRes>;
+
+    fn get_call(self) -> FwCall<'a, Self::ApiRequest, Self::ApiResponse> {
+        FwCall::new(
+            Cow::Owned(format!("/v3/charges/{}/capture", self.flw_ref)),
+            reqwest::Method::POST,
+            Some(Payload::Plain(self)),
+        )
+    }
+}
+
+impl<'a> ToFwCall<'a> for RefundPreAuthChargeReq {
+    type ApiRequest = Self;
+
+    type ApiResponse = ResponseType<RefundPreAuthChargeRes>;
+
+    fn get_call(self) -> FwCall<'a, Self::ApiRequest, Self::ApiResponse> {
+        FwCall::new(
+            Cow::Owned(format!("/v3/charges/{}/refund", self.flw_ref)),
+            reqwest::Method::POST,
+            Some(Payload::Plain(self)),
+        )
+    }
+}
+
+impl<'a> ToFwCall<'a> for VoidPreAuthChargeReq {
+    type ApiRequest = Self;
+
+    type ApiResponse = ResponseType<VoidPreAuthChargeRes>;
+
+    fn get_call(self) -> FwCall<'a, Self::ApiRequest, Self::ApiResponse> {
+        FwCall::new(
+            Cow::Owned(format!("/v3/charges/{}/void", self.flw_ref)),
+            reqwest::Method::POST,
             Some(Payload::Plain(self)),
         )
     }

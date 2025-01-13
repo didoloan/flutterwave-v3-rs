@@ -5,7 +5,6 @@
 [![Build Status](https://github.com/didoloan/flutterwave-v3-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/didoloan/flutterwave-v3-rs/actions/workflows/rust.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
 A Rust crate for interacting with the Flutterwave v3 API. This crate provides a convenient way to access various Flutterwave functionalities, simplifying the integration of payment and other financial services into your Rust applications.
 
 ## Installation
@@ -14,33 +13,47 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-flutterwave-rs = "0.1.0" // Replace with the actual version
+flutterwave-rs = "0.1.1-alpha.1" // Replace with the actual version
 ```
 
 ## Currently Implemented Functionality
 
 This crate currently supports the following Flutterwave v3 API functionalities:
 
-* **Virtual Account Numbers:**
-    * `create_virtual_acct_no`: Create a virtual account number.
-    * `create_bulk_virtual_acct_no`: Create virtual account numbers in bulk.
-    * `get_bulk_virtual_acct_details`: Retrieve details of bulk virtual accounts.
+- **Virtual Account Numbers:**
 
-* **Charges:**
-    * `initiate_card_charge`: Initiate a card charge.
-    * `initiate_bank_transfer`: Initiate a bank transfer.
-    * `initiate_ach_payment`: Initiate an ACH payment.
+  - `create_virtual_acct_no`: Create a virtual account number.
+  - `create_bulk_virtual_acct_no`: Create virtual account numbers in bulk.
+  - `get_bulk_virtual_acct_details`: Retrieve details of bulk virtual accounts.
 
-* **Transactions:**
-    * `verify_trans_by_id`: Verify a transaction by its ID.
-    * `verify_trans_by_txref`: Verify a transaction by its transaction reference.
+- **Charges:**
 
-* **Validation:**
-    * `validate_charge`: Validate a charge.
+  - `initiate_card_charge`: Initiate a card charge.
+  - `initiate_bank_transfer`: Initiate a bank transfer.
+  - `initiate_ach_payment`: Initiate an ACH payment.
 
+- **Transactions:**
 
+  - `verify_trans_by_id`: Verify a transaction by its ID.
+  - `verify_trans_by_txref`: Verify a transaction by its transaction reference.
+
+- **Validation:**
+
+  - `validate_charge`: Validate a charge.
+
+- **ACH Payments:**
+
+  - `initiate_ach_payment`: Initiate an ACH payment.
+  - `verify_ach_payment`: Verify an ACH payment.
+  - `cancel_ach_payment`: Cancel an ACH payment.
+
+- **PreAuthorization:**
+  - `capture_preauth_charge`: Capture a pre-authorized charge.
+  - `refund_preauth_charge`: Refund a pre-authorized.
+  - `void_preauth_charge`: Void a pre-authorized charge.
 
 ## Usage
+
 ```
 
 use flutterwave_rs::v3_client::FWV3Client;
@@ -88,5 +101,3 @@ async fn main() {
     // ... other operations
 }
 ```
-
-

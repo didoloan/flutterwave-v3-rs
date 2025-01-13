@@ -4,6 +4,10 @@ use flutterwave_models::{
     charge::{ach::AchReq, bank_transfer::BankTransferReq, direct_charge::CardChargeReq},
     encrypted_payload::EncryptedPayload,
     errors::FWaveError,
+    preauthorization::{
+        capture_preauth_charge::CapturePreAuthChargeReq,
+        refund_preauth_charge::RefundPreAuthChargeReq, void_preauth_charge::VoidPreAuthChargeReq,
+    },
     transactions::transaction_verify::{VerifyTransByIdReq, VerifyTransByTxRefReq},
     validate_charge::ValidateChargeReq,
     virtual_acct_number::{
@@ -20,7 +24,10 @@ use std::str::FromStr;
 macro_rules! generate_client_method {
     ($t:ty, $func_name:ident) => {
         #[allow(unused)]
-        async fn $func_name(&self, req: $t) -> Result<<$t as ToFwCall>::ApiResponse, FWaveError> {
+        pub async fn $func_name(
+            &self,
+            req: $t,
+        ) -> Result<<$t as ToFwCall>::ApiResponse, FWaveError> {
             self.make_v3_request(req).await
         }
     };
@@ -111,33 +118,7 @@ impl<'a> FWV3Client<'a> {
     generate_client_method!(ValidateChargeReq, validate_charge);
     generate_client_method!(BulkVirtualAcctDetailsReq, get_bulk_virtual_acct_details);
     generate_client_method!(AchReq, initiate_ach_payment);
-}
-
-#[tokio::test]
-async fn test_creat_acct() {
-    let client = FWV3Client::new(
-        "FLWSECK-266126f0ebb8c833c2852fdc5a21eec5-194272cd837vt-X",
-        "FLWPUBK-03d00084cd0fd4f65a56017d2423b9fc-X",
-        "266126f0ebb836dbcff05110",
-    );
-
-    let response = client
-        .create_virtual_acct_no(VirtualAcctCreationReq {
-            amount: 0.into(),
-            bvn: "".into(),
-            email: "test@email.com".into(),
-            is_permanent: None,
-            narration: None,
-            tx_ref: None,
-        })
-        .await;
-
-    match response {
-        Ok(res) => {
-            println!("{:?}", res);
-        }
-        Err(err) => {
-            println!("{}", err);
-        }
-    }
+    generate_client_method!(CapturePreAuthChargeReq, capture_preauth_charge);
+    generate_client_method!(VoidPreAuthChargeReq, void_preauth_charge);
+    generate_client_method!(RefundPreAuthChargeReq, refund_preauth_charge);
 }
