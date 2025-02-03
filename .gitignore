@@ -1,4 +1,4 @@
 /target
 *.lock
-/flutterwave-v3-models
+*flutterwave-v3-models
 /flutterwave-v3-models/*
