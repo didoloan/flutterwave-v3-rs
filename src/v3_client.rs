@@ -1,18 +1,28 @@
-use crate::fwcall::{Payload, ToFwCall};
 use async_symm_crypto::AsyncEncryption;
 use flutterwave_models::{
+    api_responses::ResponseType,
+    common::payload::Payload,fwcall::ToFwCall,
     charge::{ach::AchReq, bank_transfer::BankTransferReq, direct_charge::CardChargeReq},
     encrypted_payload::EncryptedPayload,
     errors::FWaveError,
+    payment_plans::{CancelPlanReq, CreatePlanReq, GetPlanReq, GetPlansReq, UpdatePlanReq},
     preauthorization::{
         capture_preauth_charge::CapturePreAuthChargeReq,
         refund_preauth_charge::RefundPreAuthChargeReq, void_preauth_charge::VoidPreAuthChargeReq,
     },
-    transactions::transaction_verify::{VerifyTransByIdReq, VerifyTransByTxRefReq},
+    transactions::{
+        fetch_refunded_trans::{FetchMultiRefundedTransReq, FetchRefundedTransReq},
+        get_transactions::GetTransactionsReq,
+        query_trans_fees::QueryTransFeesReq,
+        refund_trans::RefundTransactionReq,
+        resend_failed_webhook::ResendFailedWebhookReq,
+        transaction_verify::{VerifyTransByIdReq, VerifyTransByTxRefReq},
+        view_trans_timeline::ViewTransTimelineReq,
+    },
     validate_charge::ValidateChargeReq,
     virtual_acct_number::{
-        get_bulk_virtual_acct_details::BulkVirtualAcctDetailsReq, VirtualAcctBulkCreationReq,
-        VirtualAcctCreationReq,
+        create_virtual_account::{VirtualAcctBulkCreationReq, VirtualAcctCreationReq},
+        get_bulk_virtual_acct_details::BulkVirtualAcctDetailsReq,
     },
 };
 use reqwest::{
@@ -21,15 +31,21 @@ use reqwest::{
 };
 use std::str::FromStr;
 
-macro_rules! generate_client_method {
-    ($t:ty, $func_name:ident) => {
-        #[allow(unused)]
-        pub async fn $func_name(
-            &self,
-            req: $t,
-        ) -> Result<<$t as ToFwCall>::ApiResponse, FWaveError> {
-            self.make_v3_request(req).await
-        }
+macro_rules! generate_client_methods {
+    (
+        $(
+            ($t:ty, $func_name:ident)
+        )+
+    ) => {
+        $(
+            #[allow(unused)]
+            pub async fn $func_name(
+                &self,
+                req: $t,
+            ) -> Result<ResponseType<<$t as ToFwCall>::ApiResponse>, FWaveError> {
+                self.make_v3_request(req).await
+            }
+        )+
     };
 }
 
@@ -74,7 +90,7 @@ impl<'a> FWV3Client<'a> {
     async fn make_v3_request<'b, C: ToFwCall<'b> + 'b>(
         &'b self,
         call: C,
-    ) -> Result<C::ApiResponse, FWaveError> {
+    ) -> Result<ResponseType<C::ApiResponse>, FWaveError> {
         let call = call.get_call();
 
         let mut request = self
@@ -106,19 +122,49 @@ impl<'a> FWV3Client<'a> {
             }
         }
 
-        Ok(request.send().await?.json::<C::ApiResponse>().await?)
+        let response = request.send().await?;
+        let status = response.status();
+        Ok(response.json::<ResponseType<C::ApiResponse>>().await?.replace_stat_code(status))
     }
 
-    generate_client_method!(VirtualAcctCreationReq, create_virtual_acct_no);
-    generate_client_method!(VirtualAcctBulkCreationReq, create_bulk_virtual_acct_no);
-    generate_client_method!(CardChargeReq, initiate_card_charge);
-    generate_client_method!(BankTransferReq, initiate_bank_transfer);
-    generate_client_method!(VerifyTransByIdReq, verify_trans_by_id);
-    generate_client_method!(VerifyTransByTxRefReq, verify_trans_by_txref);
-    generate_client_method!(ValidateChargeReq, validate_charge);
-    generate_client_method!(BulkVirtualAcctDetailsReq, get_bulk_virtual_acct_details);
-    generate_client_method!(AchReq, initiate_ach_payment);
-    generate_client_method!(CapturePreAuthChargeReq, capture_preauth_charge);
-    generate_client_method!(VoidPreAuthChargeReq, void_preauth_charge);
-    generate_client_method!(RefundPreAuthChargeReq, refund_preauth_charge);
+    generate_client_methods!(
+        // Charge
+        (CardChargeReq, initiate_card_charge)
+        (BankTransferReq, initiate_bank_transfer)
+        (AchReq, initiate_ach_payment)
+        
+        // Verify Trans
+        (VerifyTransByIdReq, verify_trans_by_id)
+        (VerifyTransByTxRefReq, verify_trans_by_txref)
+        
+        // Validate Charge
+        (ValidateChargeReq, validate_charge)
+        
+        // PreAuth
+        (CapturePreAuthChargeReq, capture_preauth_charge)
+        (VoidPreAuthChargeReq, void_preauth_charge)
+        (RefundPreAuthChargeReq, refund_preauth_charge)
+    
+        // Virtual Acct
+        (BulkVirtualAcctDetailsReq, get_bulk_virtual_acct_details)
+        (VirtualAcctCreationReq, create_virtual_acct_no)
+        (VirtualAcctBulkCreationReq, create_bulk_virtual_acct_no)
+    
+        // Transactions
+        (FetchRefundedTransReq, fetch_refunded_transactions)
+        (FetchMultiRefundedTransReq, fetch_multi_refunded_transactions)
+        (GetTransactionsReq, get_transaction)
+        (QueryTransFeesReq, query_transaction_fees)
+        (RefundTransactionReq, refund_transaction)
+        (ResendFailedWebhookReq, resend_failed_webhook)
+        (ViewTransTimelineReq, view_trans_imeline)
+    
+        // Payment Plans
+        (CreatePlanReq, create_payment_plan)
+        (GetPlanReq, get_payment_plan)
+        (GetPlansReq, get_payment_plans)
+        (CancelPlanReq, cancel_payment_plan)
+        (UpdatePlanReq, update_payment_plan)
+    );
+
 }
